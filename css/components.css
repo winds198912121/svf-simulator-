@@ -1,0 +1,421 @@
+/* SVF Simulator - Component Library Styles */
+
+/* Print/Preview Specific Styles */
+@media print {
+    .app-header,
+    .sidebar,
+    .toolbar,
+    .bottom-panel,
+    .resize-handle,
+    .component-toolbar,
+    .data-binding {
+        display: none !important;
+    }
+
+    .main-content {
+        display: block;
+    }
+
+    .designer-area {
+        width: 100%;
+    }
+
+    .canvas-wrapper {
+        padding: 0;
+    }
+
+    .page {
+        box-shadow: none;
+        margin: 0;
+    }
+
+    .grid-overlay {
+        display: none;
+    }
+
+    .svf-component {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Component Content Styles */
+.component-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Text Component */
+.svf-text .component-content {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    padding: 0;
+    outline: none;
+    width: 100%;
+    resize: none;
+}
+
+/* Label Component */
+.svf-label .component-content {
+    display: flex;
+    align-items: center;
+}
+
+/* Table Component */
+.table-controls {
+    position: absolute;
+    top: -28px;
+    right: 0;
+    display: none;
+    gap: 4px;
+}
+
+.svf-table:hover .table-controls {
+    display: flex;
+}
+
+.table-control-btn {
+    padding: 2px 6px;
+    font-size: 11px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.table-control-btn:hover {
+    background: #f8fafc;
+}
+
+/* Editable Table Cell */
+.editable-cell {
+    cursor: text;
+}
+
+.editable-cell:focus {
+    outline: 2px solid #2563eb;
+    outline-offset: -2px;
+    background: #eff6ff;
+}
+
+/* Image Component */
+.svf-image .placeholder-text {
+    font-size: 12px;
+    text-align: center;
+}
+
+.svf-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-upload-btn {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    font-size: 11px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none;
+}
+
+.svf-image:hover .image-upload-btn {
+    display: block;
+}
+
+/* Barcode Component */
+.barcode-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.barcode-bars {
+    display: flex;
+    gap: 1px;
+    height: 40px;
+}
+
+.barcode-bar {
+    width: 2px;
+    background: #1e293b;
+}
+
+.barcode-bar.wide {
+    width: 4px;
+}
+
+.barcode-text {
+    font-family: monospace;
+    font-size: 11px;
+    color: #1e293b;
+}
+
+/* QR Code Component */
+.qrcode-content {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 1px;
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+}
+
+.qr-module {
+    background: #1e293b;
+    border-radius: 1px;
+}
+
+.qr-module.light {
+    background: white;
+}
+
+/* Data Bound Text */
+.data-bound-text {
+    color: #059669;
+    font-weight: 500;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.data-bound-text::before {
+    content: '{';
+    color: #10b981;
+}
+
+.data-bound-text::after {
+    content: '}';
+    color: #10b981;
+}
+
+/* Field Binding Badge */
+.field-binding {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #10b981;
+    color: white;
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.svf-component.selected .field-binding,
+.svf-component:hover .field-binding {
+    opacity: 0.9;
+}
+
+/* Component Preview (in template library) */
+.component-preview {
+    transform: scale(0.5);
+    transform-origin: top left;
+}
+
+/* Loading State */
+.component-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.component-loading::after {
+    content: '...';
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* Error State */
+.component-error {
+    border-color: #ef4444 !important;
+    background: #fef2f2;
+}
+
+.error-message {
+    position: absolute;
+    bottom: -24px;
+    left: 0;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 1001;
+}
+
+/* Success State */
+.component-success {
+    animation: success-flash 0.5s ease-out;
+}
+
+@keyframes success-flash {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    100% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+}
+
+/* Component Locked State */
+.svf-component.locked {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.svf-component.locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 12px;
+}
+
+/* Component Hidden State (in design mode) */
+.svf-component.hidden-in-print {
+    opacity: 0.3;
+}
+
+.svf-component.hidden-in-print::before {
+    content: '👁️';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+/* Tooltip */
+.component-tooltip {
+    position: absolute;
+    background: #1e293b;
+    color: white;
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.component-tooltip.visible {
+    opacity: 0.9;
+}
+
+/* Component Group */
+.component-group {
+    position: absolute;
+    border: 2px solid #8b5cf6;
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.group-label {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: #8b5cf6;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Repeating Component (for loops) */
+.repeating-component {
+    border-left: 3px solid #f59e0b;
+}
+
+.repeat-indicator {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: #f59e0b;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.repeat-indicator::before {
+    content: '🔁 ';
+}
+
+/* Calculated Field */
+.calculated-field {
+    background: rgba(245, 158, 11, 0.1);
+    font-family: monospace;
+}
+
+.calculated-field::before {
+    content: '∑';
+    color: #f59e0b;
+    margin-right: 4px;
+}
+
+/* Conditional Display */
+.conditional-component {
+    border-style: dotted;
+}
+
+.condition-label {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    background: #6366f1;
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Component Animation */
+.component-enter {
+    animation: component-enter 0.3s ease-out;
+}
+
+@keyframes component-enter {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.component-exit {
+    animation: component-exit 0.2s ease-in;
+}
+
+@keyframes component-exit {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}

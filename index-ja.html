@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVF シミュレーター - フォーム設計練習システム</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/designer.css">
+    <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- ヘッダー -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>📋 SVF シミュレーター</h1>
+                <span class="version">v1.0</span>
+            </div>
+            <div class="header-right">
+                <button id="btn-save" class="btn btn-primary">💾 保存</button>
+                <button id="btn-load" class="btn btn-secondary">📂 読込</button>
+                <button id="btn-export" class="btn btn-secondary">📤 エクスポート</button>
+                <button id="btn-import" class="btn btn-secondary">📥 インポート</button>
+            </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <div class="main-content">
+            <!-- サイドバー: コンポーネントパレット -->
+            <aside class="sidebar sidebar-left">
+                <h3>🧩 コンポーネント</h3>
+                <div class="component-palette">
+                    <div class="palette-category">
+                        <h4>基本コンポーネント</h4>
+                        <div class="component-item" data-type="text" draggable="true">
+                            <span class="icon">📝</span>
+                            <span>テキストフィールド</span>
+                        </div>
+                        <div class="component-item" data-type="label" draggable="true">
+                            <span class="icon">🏷️</span>
+                            <span>ラベル</span>
+                        </div>
+                        <div class="component-item" data-type="table" draggable="true">
+                            <span class="icon">📊</span>
+                            <span>テーブル</span>
+                        </div>
+                        <div class="component-item" data-type="image" draggable="true">
+                            <span class="icon">🖼️</span>
+                            <span>画像</span>
+                        </div>
+                    </div>
+                    <div class="palette-category">
+                        <h4>高度なコンポーネント</h4>
+                        <div class="component-item" data-type="barcode" draggable="true">
+                            <span class="icon">📠</span>
+                            <span>バーコード</span>
+                        </div>
+                        <div class="component-item" data-type="qrcode" draggable="true">
+                            <span class="icon">📱</span>
+                            <span>QRコード</span>
+                        </div>
+                        <div class="component-item" data-type="line" draggable="true">
+                            <span class="icon">➖</span>
+                            <span>線</span>
+                        </div>
+                        <div class="component-item" data-type="box" draggable="true">
+                            <span class="icon">⬜</span>
+                            <span>ボックス</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- センター: デザイナーキャンバス -->
+            <main class="designer-area">
+                <div class="toolbar">
+                    <div class="toolbar-group">
+                        <button id="btn-new" class="btn-tool" title="新規">🆕</button>
+                        <button id="btn-undo" class="btn-tool" title="元に戻す">↶</button>
+                        <button id="btn-redo" class="btn-tool" title="やり直し">↷</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <button id="btn-preview" class="btn-tool active" title="プレビュー">👁️</button>
+                        <button id="btn-data" class="btn-tool" title="データ">💾</button>
+                        <button id="btn-print" class="btn-tool" title="印刷">🖨️</button>
+                        <button id="btn-pdf" class="btn-tool" title="PDF出力">📄</button>
+                    </div>
+                    <div class="toolbar-group">
+                        <label>ズーム:</label>
+                        <button id="btn-zoom-out" class="btn-tool">-</button>
+                        <span id="zoom-level">100%</span>
+                        <button id="btn-zoom-in" class="btn-tool">+</button>
+                    </div>
+                </div>
+
+                <div class="canvas-wrapper">
+                    <div id="canvas" class="canvas" data-zoom="1">
+                        <div class="page a4">
+                            <div class="grid-overlay"></div>
+                            <div id="design-area" class="design-area">
+                                <!-- コンポーネントをここにドラッグ -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- サイドバー: プロパティパネル -->
+            <aside class="sidebar sidebar-right">
+                <h3>⚙️ プロパティ</h3>
+                <div id="properties-panel" class="properties-panel">
+                    <div class="no-selection">
+                        <p>コンポーネントを選択してプロパティを編集</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- タブ: データとプレビュー -->
+        <div class="bottom-panel" id="bottom-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="preview">プレビュー</button>
+                <button class="tab-btn" data-tab="data">データソース</button>
+                <button class="tab-btn" data-tab="templates">テンプレート</button>
+            </div>
+
+            <div class="panel-content">
+                <!-- プレビュータブ -->
+                <div id="tab-preview" class="tab-pane active">
+                    <div class="preview-toolbar">
+                        <select id="data-select" class="data-select">
+                            <option value="">データセットを選択...</option>
+                            <option value="sample1">サンプルデータ 1</option>
+                            <option value="sample2">サンプルデータ 2</option>
+                        </select>
+                        <button id="btn-refresh-preview" class="btn btn-small">🔄 更新</button>
+                    </div>
+                    <div id="preview-area" class="preview-area">
+                        <div class="preview-empty">データ読み込み後にプレビューを表示</div>
+                    </div>
+                </div>
+
+                <!-- データタブ -->
+                <div id="tab-data" class="tab-pane">
+                    <div class="data-editor">
+                        <div class="editor-toolbar">
+                            <button id="btn-validate-json" class="btn btn-small">✓ 検証</button>
+                            <button id="btn-format-json" class="btn btn-small">✨ 整形</button>
+                            <button id="btn-load-sample" class="btn btn-small">📥 サンプル読込</button>
+                        </div>
+                        <textarea id="data-editor" placeholder="JSON形式のデータを入力...">{
+  "header": {
+    "form_title": "発注書",
+    "po_number": "PO-2026-001",
+    "po_date": "2026-11-09",
+    "vendor_name": "ABC商社株式会社",
+    "vendor_address": "東京都渋谷区恵比寿1-2-3"
+  },
+  "items": [
+    {
+      "line_no": "001",
+      "material_code": "MAT-001",
+      "material_name": "部品A",
+      "quantity": 100,
+      "unit": "個",
+      "unit_price": 1500,
+      "amount": 150000
+    }
+  ],
+  "summary": {
+    "subtotal": 150000,
+    "tax_rate": 0.1,
+    "tax_amount": 15000,
+    "total": 165000
+  }
+}</textarea>
+                    </div>
+                </div>
+
+                <!-- テンプレートタブ -->
+                <div id="tab-templates" class="tab-pane">
+                    <div class="template-grid" id="template-grid">
+                        <div class="template-card sample">
+                            <div class="template-preview">
+                                <div class="preview-placeholder">発注書</div>
+                            </div>
+                            <div class="template-info">
+                                <h4>ZPOF001</h4>
+                                <p>発注書テンプレート</p>
+                                <button class="btn btn-small">読込</button>
+                            </div>
+                        </div>
+                        <div class="template-card sample">
+                            <div class="template-preview">
+                                <div class="preview-placeholder">請求書</div>
+                            </div>
+                            <div class="template-info">
+                                <h4>Invoice</h4>
+                                <p>請求書テンプレート</p>
+                                <button class="btn btn-small">読込</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- モーダル: テンプレート保存 -->
+    <div id="modal-save" class="modal">
+        <div class="modal-content">
+            <h3>💾 テンプレート保存</h3>
+            <div class="form-group">
+                <label>テンプレート名:</label>
+                <input type="text" id="template-name" placeholder="例: ZPOF001" />
+            </div>
+            <div class="form-group">
+                <label>説明:</label>
+                <textarea id="template-desc" placeholder="このテンプレートの説明..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="btn-confirm-save" class="btn btn-primary">保存</button>
+                <button class="btn btn-secondary btn-cancel">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- スクリプト -->
+    <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.19/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/data-binding.js"></script>
+    <script src="js/designer.js"></script>
+    <script src="js/preview.js"></script>
+    <script src="js/pdf-generator.js"></script>
+    <script src="js/template-manager.js"></script>
+    <script src="js/app-ja.js"></script>
+</body>
+</html>

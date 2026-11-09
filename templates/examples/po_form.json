@@ -1,0 +1,266 @@
+{
+  "name": "ZPOF001",
+  "description": "発注書テンプレート (Purchase Order Template)",
+  "version": "1.0",
+  "createdAt": "2026-11-09",
+  "components": [
+    {
+      "id": "comp-title",
+      "type": "label",
+      "x": 300,
+      "y": 40,
+      "width": 200,
+      "height": 40,
+      "properties": {
+        "text": "発注書",
+        "fontSize": 28,
+        "fontFamily": "sans-serif",
+        "color": "#1e293b",
+        "fontWeight": "bold"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-po-number-label",
+      "type": "label",
+      "x": 50,
+      "y": 100,
+      "width": 120,
+      "height": 30,
+      "properties": {
+        "text": "発注番号:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-po-number",
+      "type": "text",
+      "x": 180,
+      "y": 100,
+      "width": 200,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "header.po_number"
+    },
+    {
+      "id": "comp-date-label",
+      "type": "label",
+      "x": 450,
+      "y": 100,
+      "width": 100,
+      "height": 30,
+      "properties": {
+        "text": "発注日:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-date",
+      "type": "text",
+      "x": 560,
+      "y": 100,
+      "width": 180,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "header.po_date"
+    },
+    {
+      "id": "comp-vendor-label",
+      "type": "label",
+      "x": 50,
+      "y": 150,
+      "width": 120,
+      "height": 30,
+      "properties": {
+        "text": "供給者名:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-vendor",
+      "type": "text",
+      "x": 180,
+      "y": 150,
+      "width": 300,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "header.vendor_name"
+    },
+    {
+      "id": "comp-address-label",
+      "type": "label",
+      "x": 50,
+      "y": 190,
+      "width": 120,
+      "height": 30,
+      "properties": {
+        "text": "住所:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-address",
+      "type": "text",
+      "x": 180,
+      "y": 190,
+      "width": 560,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "header.vendor_address"
+    },
+    {
+      "id": "comp-items-table",
+      "type": "table",
+      "x": 50,
+      "y": 250,
+      "width": 690,
+      "height": 300,
+      "properties": {
+        "rows": 6,
+        "cols": 6,
+        "borderColor": "#e2e8f0"
+      },
+      "dataBinding": "items"
+    },
+    {
+      "id": "comp-subtotal-label",
+      "type": "label",
+      "x": 500,
+      "y": 580,
+      "width": 100,
+      "height": 30,
+      "properties": {
+        "text": "小計:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-subtotal",
+      "type": "text",
+      "x": 610,
+      "y": 580,
+      "width": 130,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "summary.subtotal"
+    },
+    {
+      "id": "comp-tax-label",
+      "type": "label",
+      "x": 500,
+      "y": 620,
+      "width": 100,
+      "height": 30,
+      "properties": {
+        "text": "消費税:",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "600"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-tax",
+      "type": "text",
+      "x": 610,
+      "y": 620,
+      "width": 130,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 14,
+        "fontFamily": "sans-serif",
+        "color": "#000000"
+      },
+      "dataBinding": "summary.tax_amount"
+    },
+    {
+      "id": "comp-total-label",
+      "type": "label",
+      "x": 500,
+      "y": 660,
+      "width": 100,
+      "height": 30,
+      "properties": {
+        "text": "合計:",
+        "fontSize": 16,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "bold"
+      },
+      "dataBinding": null
+    },
+    {
+      "id": "comp-total",
+      "type": "text",
+      "x": 610,
+      "y": 660,
+      "width": 130,
+      "height": 30,
+      "properties": {
+        "text": "",
+        "fontSize": 16,
+        "fontFamily": "sans-serif",
+        "color": "#000000",
+        "fontWeight": "bold"
+      },
+      "dataBinding": "summary.total"
+    }
+  ],
+  "dataBinding": {
+    "comp-po-number": "header.po_number",
+    "comp-date": "header.po_date",
+    "comp-vendor": "header.vendor_name",
+    "comp-address": "header.vendor_address",
+    "comp-items-table": "items",
+    "comp-subtotal": "summary.subtotal",
+    "comp-tax": "summary.tax_amount",
+    "comp-total": "summary.total"
+  }
+}

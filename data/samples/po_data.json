@@ -1,0 +1,63 @@
+{
+  "header": {
+    "form_title": "発注書",
+    "po_number": "PO-2026-001",
+    "po_date": "2026-11-09",
+    "vendor_name": "ABC商社株式会社",
+    "vendor_address": "〒150-0013 東京都渋谷区恵比寿1-2-3 恵比寿ビル5F"
+  },
+  "items": [
+    {
+      "line_no": "001",
+      "material_code": "MAT-001",
+      "material_name": "電子部品A (コンデンサ)",
+      "quantity": 100,
+      "unit": "個",
+      "unit_price": 1500,
+      "amount": 150000
+    },
+    {
+      "line_no": "002",
+      "material_code": "MAT-002",
+      "material_name": "電子部品B (抵抗器)",
+      "quantity": 50,
+      "unit": "個",
+      "unit_price": 2000,
+      "amount": 100000
+    },
+    {
+      "line_no": "003",
+      "material_code": "MAT-003",
+      "material_name": "電子部品C (IC チップ)",
+      "quantity": 25,
+      "unit": "個",
+      "unit_price": 5000,
+      "amount": 125000
+    },
+    {
+      "line_no": "004",
+      "material_code": "MAT-004",
+      "material_name": "ケーブル (1m)",
+      "quantity": 200,
+      "unit": "本",
+      "unit_price": 300,
+      "amount": 60000
+    },
+    {
+      "line_no": "005",
+      "material_code": "MAT-005",
+      "material_name": "コネクタ",
+      "quantity": 150,
+      "unit": "個",
+      "unit_price": 800,
+      "amount": 120000
+    }
+  ],
+  "summary": {
+    "subtotal": 555000,
+    "tax_rate": 0.1,
+    "tax_amount": 55500,
+    "total": 610500
+  },
+  "notes": "納期: 2026年11月20日まで\n支払条件: 月末締め翌月末払い\n配送先: 本社工場"
+}
