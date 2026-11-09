@@ -207,7 +207,10 @@ PO-003,2026-11-10,DEF工業,愛知県名古屋市,部品C,150,1800,270000
             <h2>👀 Step 2: データプレビュー</h2>
             <div id="data-preview"></div>
             <button class="btn btn-success" onclick="processData()">
-                ✨ 帳票を一括生成
+                ✨ 帳票を一括生成（このページで）
+            </button>
+            <button class="btn" onclick="sendToSVF()" style="background: #8b5cf6;">
+                🔄 SVFシミュレーターで自動処理
             </button>
         </div>
 
@@ -437,6 +440,26 @@ PO-003,2026-11-10,DEF工業,愛知県名古屋市,部品C,150,1800,270000
             document.getElementById('processing-section').style.display = 'none';
             document.getElementById('result-section').style.display = 'none';
             fileInput.value = '';
+        }
+
+        function sendToSVF() {
+            if (uploadedData.length === 0) {
+                alert('データが読み込まれていません');
+                return;
+            }
+
+            const confirmed = confirm(
+                `SVF Simulatorで自動処理を開始しますか？\n\n` +
+                `データ件数: ${uploadedData.length}件\n` +
+                `各レコードが2秒間隔で自動表示されます。`
+            );
+
+            if (confirmed) {
+                // データを保存してSVFページに遷移
+                localStorage.setItem('svf_batch_data', JSON.stringify(uploadedData));
+                localStorage.setItem('svf_batch_mode', 'true');
+                window.location.href = 'index.html?mode=batch';
+            }
         }
     </script>
 </body>
