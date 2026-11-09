@@ -62,6 +62,74 @@ class SVFApp {
             btn.addEventListener('click', () => this.closeModal());
         });
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
+
+        // テンプレートカードのボタンをバインド
+        this.bindTemplateCards();
+    }
+
+    bindTemplateCards() {
+        // DOMが完全にロードされた後にバインド
+        setTimeout(() => {
+            const templateCards = document.querySelectorAll('.template-card');
+            templateCards.forEach((card, index) => {
+                const btn = card.querySelector('.btn');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        if (index === 0) {
+                            this.loadPredefinedTemplate('ZPOF001');
+                        } else if (index === 1) {
+                            this.loadPredefinedTemplate('Invoice');
+                        }
+                    });
+                }
+            });
+        }, 100);
+    }
+
+    loadPredefinedTemplate(templateName) {
+        console.log('Loading predefined template:', templateName);
+
+        if (templateName === 'ZPOF001') {
+            // ZPOF001 発注書テンプレート
+            const template = {
+                name: 'ZPOF001',
+                description: '発注書テンプレート',
+                components: [
+                    { id: 'title', type: 'label', x: 300, y: 40, width: 200, height: 40,
+                      properties: { text: '発注書', fontSize: 28, fontWeight: 'bold', color: '#1e293b' } },
+                    { id: 'po-label', type: 'label', x: 50, y: 100, width: 100, height: 30,
+                      properties: { text: '発注番号:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'po-number', type: 'text', x: 160, y: 100, width: 150, height: 30,
+                      properties: { text: 'PO-2026-001', fontSize: 14 }, dataBinding: 'header.po_number' },
+                    { id: 'date-label', type: 'label', x: 400, y: 100, width: 80, height: 30,
+                      properties: { text: '発注日:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'date', type: 'text', x: 490, y: 100, width: 150, height: 30,
+                      properties: { text: '2026-11-09', fontSize: 14 }, dataBinding: 'header.po_date' },
+                    { id: 'vendor-label', type: 'label', x: 50, y: 150, width: 100, height: 30,
+                      properties: { text: '供給者名:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'vendor', type: 'text', x: 160, y: 150, width: 300, height: 30,
+                      properties: { text: 'ABC商社株式会社', fontSize: 14 }, dataBinding: 'header.vendor_name' },
+                    { id: 'table', type: 'table', x: 50, y: 220, width: 690, height: 250,
+                      properties: { rows: 5, cols: 6 } },
+                    { id: 'subtotal-label', type: 'label', x: 500, y: 500, width: 80, height: 30,
+                      properties: { text: '小計:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'subtotal', type: 'text', x: 590, y: 500, width: 150, height: 30,
+                      properties: { text: '¥250,000', fontSize: 14 }, dataBinding: 'summary.subtotal' },
+                    { id: 'tax-label', type: 'label', x: 500, y: 540, width: 80, height: 30,
+                      properties: { text: '消費税:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'tax', type: 'text', x: 590, y: 540, width: 150, height: 30,
+                      properties: { text: '¥25,000', fontSize: 14 }, dataBinding: 'summary.tax_amount' },
+                    { id: 'total-label', type: 'label', x: 500, y: 580, width: 80, height: 30,
+                      properties: { text: '合計:', fontSize: 16, fontWeight: 'bold' } },
+                    { id: 'total', type: 'text', x: 590, y: 580, width: 150, height: 30,
+                      properties: { text: '¥275,000', fontSize: 16, fontWeight: 'bold' }, dataBinding: 'summary.total' }
+                ]
+            };
+
+            this.designer.loadTemplate(template);
+            this.currentTemplate = template;
+            this.showNotification('ZPOF001 発注書テンプレートを読み込みました', 'success');
+        }
     }
 
     newTemplate() {
