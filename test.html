@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テストページ</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { color: #2563eb; }
+        .success { color: #10b981; font-size: 48px; }
+        .info {
+            background: #eff6ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        a {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        a:hover { background: #1d4ed8; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="success">✅</div>
+        <h1>GitHub Pages デプロイ成功！</h1>
+        <p>このページが表示されれば、デプロイは正常に動作しています。</p>
+        
+        <div class="info">
+            <strong>📋 確認事項:</strong><br>
+            ✓ GitHub Pagesは正常に動作<br>
+            ✓ ファイルは正しくアップロード<br>
+            ✓ URLは正しい
+        </div>
+        
+        <p>メインアプリケーションへ:</p>
+        <a href="index.html">SVF Simulator を開く →</a>
+        
+        <hr style="margin: 30px 0;">
+        
+        <p style="font-size: 12px; color: #666;">
+            現在時刻: <span id="time"></span><br>
+            URL: <code>https://winds198912121.github.io/svf-simulator-/test.html</code>
+        </p>
+    </div>
+    
+    <script>
+        document.getElementById('time').textContent = new Date().toLocaleString('ja-JP');
+    </script>
+</body>
+</html>
