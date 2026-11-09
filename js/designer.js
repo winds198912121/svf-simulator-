@@ -281,7 +281,7 @@ class SVFDesigner {
         const panel = document.getElementById('properties-panel');
 
         if (!component) {
-            panel.innerHTML = '<div class="no-selection"><p>请选择一个组件以编辑属性</p></div>';
+            panel.innerHTML = '<div class="no-selection"><p>コンポーネントを選択してプロパティを編集</p></div>';
             return;
         }
 
