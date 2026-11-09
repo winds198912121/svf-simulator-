@@ -177,16 +177,40 @@ class SVFDesigner {
 
             case 'table':
                 const rows = properties.rows || 3;
-                const cols = properties.cols || 3;
+                const cols = properties.cols || 6;
+
+                // 発注書/請求書用の列ヘッダー
+                const tableHeaders = cols === 6
+                    ? ['行番号', '品番', '品名', '数量', '単価', '金額']
+                    : cols === 5
+                    ? ['行番号', '品名', '数量', '単価', '金額']
+                    : Array.from({length: cols}, (_, i) => `Column ${i + 1}`);
+
                 let tableHTML = '<table class="component-content"><thead><tr>';
-                for (let i = 0; i < cols; i++) {
-                    tableHTML += `<th>Column ${i + 1}</th>`;
-                }
+                tableHeaders.forEach(header => {
+                    tableHTML += `<th>${header}</th>`;
+                });
                 tableHTML += '</tr></thead><tbody>';
+
+                // サンプルデータ
+                const sampleData = cols === 6
+                    ? [
+                        ['001', 'MAT-001', '部品A', '100', '¥1,500', '¥150,000'],
+                        ['002', 'MAT-002', '部品B', '50', '¥2,000', '¥100,000'],
+                        ['003', 'MAT-003', '部品C', '25', '¥5,000', '¥125,000']
+                    ]
+                    : cols === 5
+                    ? [
+                        ['001', '商品A', '100', '¥1,500', '¥150,000'],
+                        ['002', '商品B', '50', '¥2,000', '¥100,000']
+                    ]
+                    : [];
+
                 for (let i = 0; i < rows - 1; i++) {
                     tableHTML += '<tr>';
                     for (let j = 0; j < cols; j++) {
-                        tableHTML += '<td>Data</td>';
+                        const cellData = (sampleData[i] && sampleData[i][j]) || '-';
+                        tableHTML += `<td>${cellData}</td>`;
                     }
                     tableHTML += '</tr>';
                 }
