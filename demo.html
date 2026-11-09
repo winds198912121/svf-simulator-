@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVF シミュレーター - デモ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f8fafc;
+        }
+        .app-header {
+            background: #1e293b;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .app-header h1 {
+            font-size: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+        .main-content {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .component-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: move;
+            user-select: none;
+        }
+        .component-item:hover {
+            background: white;
+            border-color: #2563eb;
+        }
+        .canvas-area {
+            flex: 1;
+            padding: 40px;
+            overflow: auto;
+        }
+        .page {
+            width: 794px;
+            height: 1123px;
+            background: white;
+            margin: 0 auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .design-area {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .component {
+            position: absolute;
+            padding: 8px;
+            border: 2px dashed #cbd5e1;
+            background: rgba(255,255,255,0.9);
+            cursor: move;
+        }
+        .component:hover {
+            border-color: #2563eb;
+        }
+        .component.dragging {
+            opacity: 0.5;
+        }
+        .sidebar-right {
+            width: 280px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+        .success-msg {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px;
+            text-align: center;
+        }
+        .demo-template {
+            position: absolute;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e293b;
+            left: 50%;
+            top: 40px;
+            transform: translateX(-50%);
+        }
+        .demo-field {
+            position: absolute;
+            padding: 8px 12px;
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 4px;
+        }
+        .instructions {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 20px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <h1>📋 SVF シミュレーター - デモバージョン</h1>
+        <div>
+            <button class="btn btn-primary" onclick="loadTemplate()">📥 ZPOF001を読込</button>
+            <button class="btn btn-primary" onclick="clearCanvas()">🗑️ クリア</button>
+        </div>
+    </div>
+
+    <div class="success-msg">
+        ✅ デプロイ成功！このページは正常に動作しています
+    </div>
+
+    <div class="instructions">
+        <strong>🎯 使い方:</strong>
+        <ol style="margin-left: 20px; margin-top: 10px;">
+            <li>右上の「📥 ZPOF001を読込」ボタンをクリック → 発注書テンプレートが表示されます</li>
+            <li>左側のコンポーネントを中央の白い紙にドラッグ → 自由に配置できます</li>
+            <li>「🗑️ クリア」ボタンで画面をリセット</li>
+        </ol>
+    </div>
+
+    <div class="main-content">
+        <aside class="sidebar">
+            <h3>🧩 コンポーネント</h3>
+            <div style="margin-top: 15px;">
+                <div class="component-item" draggable="true" ondragstart="drag(event)" data-type="label">
+                    🏷️ ラベル
+                </div>
+                <div class="component-item" draggable="true" ondragstart="drag(event)" data-type="text">
+                    📝 テキストフィールド
+                </div>
+                <div class="component-item" draggable="true" ondragstart="drag(event)" data-type="box">
+                    ⬜ ボックス
+                </div>
+            </div>
+        </aside>
+
+        <div class="canvas-area">
+            <div class="page">
+                <div class="design-area" id="design-area" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- コンポーネントがここに配置されます -->
+                </div>
+            </div>
+        </div>
+
+        <aside class="sidebar-right">
+            <h3>⚙️ プロパティ</h3>
+            <p style="margin-top: 15px; color: #64748b; font-size: 14px;">
+                コンポーネントをクリックすると、<br>ここに編集オプションが表示されます
+            </p>
+            <div id="info" style="margin-top: 20px; padding: 12px; background: #f1f5f9; border-radius: 6px; font-size: 13px;">
+                <strong>📊 ステータス:</strong><br>
+                コンポーネント数: <span id="count">0</span>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        let componentCount = 0;
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("type", ev.target.dataset.type);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const type = ev.dataTransfer.getData("type");
+            const designArea = document.getElementById('design-area');
+            const rect = designArea.getBoundingClientRect();
+
+            const x = ev.clientX - rect.left;
+            const y = ev.clientY - rect.top;
+
+            addComponent(type, x, y);
+        }
+
+        function addComponent(type, x, y) {
+            const comp = document.createElement('div');
+            comp.className = 'component';
+            comp.style.left = x + 'px';
+            comp.style.top = y + 'px';
+
+            const icons = {
+                'label': '🏷️',
+                'text': '📝',
+                'box': '⬜'
+            };
+
+            const texts = {
+                'label': 'ラベル',
+                'text': 'テキストフィールド',
+                'box': 'ボックス'
+            };
+
+            comp.innerHTML = icons[type] + ' ' + texts[type];
+            comp.draggable = true;
+
+            comp.addEventListener('dragstart', function(e) {
+                this.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', this.style.left + ',' + this.style.top);
+            });
+
+            comp.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+            });
+
+            document.getElementById('design-area').appendChild(comp);
+            componentCount++;
+            updateCount();
+        }
+
+        function loadTemplate() {
+            clearCanvas();
+
+            const template = [
+                { type: 'label', x: 300, y: 40, text: '発注書', style: 'font-size: 28px; font-weight: bold;' },
+                { type: 'label', x: 50, y: 100, text: '発注番号:', style: 'font-weight: 600;' },
+                { type: 'text', x: 150, y: 100, text: 'PO-2026-001', style: 'background: #eff6ff;' },
+                { type: 'label', x: 50, y: 140, text: '発注日:', style: 'font-weight: 600;' },
+                { type: 'text', x: 150, y: 140, text: '2026-11-09', style: 'background: #eff6ff;' },
+                { type: 'label', x: 50, y: 180, text: '供給者名:', style: 'font-weight: 600;' },
+                { type: 'text', x: 150, y: 180, text: 'ABC商社株式会社', style: 'background: #eff6ff; width: 300px;' },
+                { type: 'box', x: 50, y: 250, text: '明細テーブル\n（品番、品名、数量...）', style: 'width: 690px; height: 200px; text-align: center; padding-top: 80px; background: #f8fafc;' },
+                { type: 'label', x: 500, y: 480, text: '小計:', style: 'font-weight: 600;' },
+                { type: 'text', x: 580, y: 480, text: '¥250,000', style: 'background: #eff6ff; text-align: right;' },
+                { type: 'label', x: 500, y: 520, text: '消費税:', style: 'font-weight: 600;' },
+                { type: 'text', x: 580, y: 520, text: '¥25,000', style: 'background: #eff6ff; text-align: right;' },
+                { type: 'label', x: 500, y: 560, text: '合計:', style: 'font-weight: bold; font-size: 16px;' },
+                { type: 'text', x: 580, y: 560, text: '¥275,000', style: 'background: #dcfce7; font-weight: bold; text-align: right;' }
+            ];
+
+            template.forEach(item => {
+                const comp = document.createElement('div');
+                comp.className = 'component demo-field';
+                comp.style.left = item.x + 'px';
+                comp.style.top = item.y + 'px';
+                comp.style.cssText += item.style || '';
+                comp.innerHTML = item.text;
+                document.getElementById('design-area').appendChild(comp);
+            });
+
+            componentCount = template.length;
+            updateCount();
+
+            alert('✅ ZPOF001 発注書テンプレートを読み込みました！\n\nA4用紙に発注書のレイアウトが表示されています。');
+        }
+
+        function clearCanvas() {
+            document.getElementById('design-area').innerHTML = '';
+            componentCount = 0;
+            updateCount();
+        }
+
+        function updateCount() {
+            document.getElementById('count').textContent = componentCount;
+        }
+    </script>
+</body>
+</html>
