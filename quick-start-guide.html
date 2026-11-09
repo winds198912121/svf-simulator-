@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVF Simulator - クイックスタートガイド</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+        .step {
+            background: #f0f9ff;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+        }
+        .step strong {
+            color: #1e40af;
+        }
+        code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background: #1d4ed8;
+        }
+        .screenshot {
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        .tip {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 SVF Simulator</h1>
+        <p>クイックスタートガイド - 3分で使い方をマスター</p>
+    </div>
+
+    <div class="section">
+        <h2>🎯 最速の始め方（1分）</h2>
+        
+        <div class="step">
+            <strong>ステップ1:</strong> 下部の「テンプレート」タブをクリック
+        </div>
+        
+        <div class="step">
+            <strong>ステップ2:</strong> ZPOF001の <code>読込</code> ボタンをクリック
+        </div>
+        
+        <div class="step">
+            <strong>ステップ3:</strong> 画面中央に発注書のデザインが表示されます！
+        </div>
+        
+        <a href="index.html" class="button">今すぐ試す →</a>
+    </div>
+
+    <div class="section">
+        <h2>🎨 基本操作（5分で習得）</h2>
+        
+        <h3>1. コンポーネントを追加</h3>
+        <ul>
+            <li>左側のパレットから選択</li>
+            <li>中央の白い画面（キャンバス）にドラッグ</li>
+            <li>例: 「ラベル」をドラッグして「発注書」タイトルを作成</li>
+        </ul>
+
+        <h3>2. プロパティを編集</h3>
+        <ul>
+            <li>コンポーネントをクリックして選択</li>
+            <li>右側のパネルで編集</li>
+            <li>テキスト、色、サイズなどを変更</li>
+        </ul>
+
+        <h3>3. データを入力</h3>
+        <ul>
+            <li>下部の「データソース」タブをクリック</li>
+            <li>「サンプル読込」ボタンをクリック</li>
+            <li>「プレビュー」タブでデータ表示を確認</li>
+        </ul>
+
+        <h3>4. 保存</h3>
+        <ul>
+            <li>上部の「💾 保存」ボタンをクリック</li>
+            <li>または <code>Ctrl+S</code> (Mac: <code>Cmd+S</code>)</li>
+            <li>テンプレート名を入力して保存</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>⌨️ ショートカットキー</h2>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="background: #f3f4f6;">
+                <th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">キー</th>
+                <th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">機能</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;"><code>Ctrl+S</code></td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;">保存</td>
+            </tr>
+            <tr style="background: #f9fafb;">
+                <td style="padding: 10px; border: 1px solid #e5e7eb;"><code>Ctrl+Z</code></td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;">元に戻す</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;"><code>Delete</code></td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;">選択したコンポーネントを削除</td>
+            </tr>
+            <tr style="background: #f9fafb;">
+                <td style="padding: 10px; border: 1px solid #e5e7eb;"><code>+</code> / <code>-</code></td>
+                <td style="padding: 10px; border: 1px solid #e5e7eb;">ズームイン/アウト</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>💡 よくある質問</h2>
+        
+        <h3>Q: 画面が空白です</h3>
+        <p><strong>A:</strong> 正常です！以下のいずれかを試してください：</p>
+        <ul>
+            <li>下部「テンプレート」→ ZPOF001の「読込」をクリック</li>
+            <li>左側からコンポーネントをドラッグ</li>
+        </ul>
+
+        <h3>Q: 左側のコンポーネントパレットが見えません</h3>
+        <p><strong>A:</strong> 画面幅が狭い可能性があります。ブラウザを全画面表示にしてください。</p>
+
+        <h3>Q: コンポーネントをドラッグできません</h3>
+        <p><strong>A:</strong> コンポーネントアイテムを左クリックしたまま、中央の白い領域までドラッグしてください。</p>
+
+        <h3>Q: 保存したテンプレートはどこに？</h3>
+        <p><strong>A:</strong> ブラウザのLocalStorageに保存されます：</p>
+        <ul>
+            <li>上部「読込」ボタンで呼び出せます</li>
+            <li>「エクスポート」でJSONファイルとしてダウンロード可能</li>
+        </ul>
+    </div>
+
+    <div class="tip">
+        <strong>💡 ヒント:</strong> 最初は ZPOF001 テンプレートを読み込んで、既存のデザインを編集してみるのがおすすめです！
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="index.html" class="button" style="font-size: 18px; padding: 15px 30px;">
+            🚀 SVF Simulator を開始
+        </a>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px;">
+        <p>問題がありますか？ブラウザのコンソール（F12）でエラーを確認してください</p>
+        <p>Version 1.0 | <a href="https://github.com/winds198912121/svf-simulator-" style="color: #2563eb;">GitHub</a></p>
+    </div>
+</body>
+</html>
