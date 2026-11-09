@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>データ編集ガイド - SVF Simulator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 { color: #2563eb; margin-top: 0; }
+        .step {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .step strong { color: #1e40af; }
+        code {
+            background: #e5e7eb;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #1e293b;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        .tip {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .example {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+        .button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+        .highlight {
+            background: #fef9c3;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 データ編集ガイド</h1>
+        <p>SVF Simulator - データの変更方法</p>
+    </div>
+
+    <div class="section">
+        <h2>🎯 方法1: 直接編集（一番簡単）</h2>
+
+        <div class="step">
+            <strong>ステップ1:</strong> 下部の「データソース」タブをクリック
+        </div>
+
+        <div class="step">
+            <strong>ステップ2:</strong> JSONエディタで数値や文字を直接変更
+        </div>
+
+        <div class="step">
+            <strong>ステップ3:</strong> 「✓ 検証」ボタンで確認
+        </div>
+
+        <div class="step">
+            <strong>ステップ4:</strong> 「プレビュー」タブで結果を確認
+        </div>
+
+        <div class="example">
+            <strong>例: 発注番号を変更</strong>
+            <pre>変更前: "po_number": "PO-2026-001"
+変更後: "po_number": "PO-2026-999"</pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📝 よく変更する項目</h2>
+
+        <table>
+            <tr>
+                <th>項目</th>
+                <th>JSONのパス</th>
+                <th>例</th>
+            </tr>
+            <tr>
+                <td>発注番号</td>
+                <td><code>header.po_number</code></td>
+                <td>"PO-2026-999"</td>
+            </tr>
+            <tr>
+                <td>日付</td>
+                <td><code>header.po_date</code></td>
+                <td>"2026-12-31"</td>
+            </tr>
+            <tr>
+                <td>供給者名</td>
+                <td><code>header.vendor_name</code></td>
+                <td>"新しい会社名"</td>
+            </tr>
+            <tr>
+                <td>合計金額</td>
+                <td><code>summary.total</code></td>
+                <td>999000</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>🔢 数値の変更</h2>
+
+        <h3>金額を変更する例:</h3>
+        <pre>{
+  "summary": {
+    "subtotal": <span class="highlight">250000</span>,  ← ここを変更
+    "tax_amount": <span class="highlight">25000</span>,  ← ここを変更
+    "total": <span class="highlight">275000</span>       ← ここを変更
+  }
+}</pre>
+
+        <div class="tip">
+            <strong>💡 ヒント:</strong> 数値は引用符なし（"" なし）で書きます<br>
+            ✅ 正しい: <code>"total": 275000</code><br>
+            ❌ 間違い: <code>"total": "275000"</code>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 明細行の追加/削除</h2>
+
+        <h3>明細行を追加:</h3>
+        <pre>"items": [
+  {
+    "line_no": "001",
+    "material_name": "部品A",
+    "quantity": 100,
+    "unit_price": 1500,
+    "amount": 150000
+  },
+  <span class="highlight">← ここにカンマ(,)を追加</span>
+  <span class="highlight">{
+    "line_no": "002",
+    "material_name": "部品B",
+    "quantity": 50,
+    "unit_price": 2000,
+    "amount": 100000
+  }</span>  <span class="highlight">← 新しい行を追加</span>
+]</pre>
+
+        <div class="tip">
+            <strong>⚠️ 注意:</strong>
+            <ul>
+                <li>最後の項目の後にはカンマ(,)を付けない</li>
+                <li>項目と項目の間にはカンマ(,)が必要</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>✨ 完全なカスタムデータ例</h2>
+
+        <h3>あなた専用のデータ:</h3>
+        <pre>{
+  "header": {
+    "po_number": "<span class="highlight">あなたの注文番号</span>",
+    "po_date": "<span class="highlight">2026-11-15</span>",
+    "vendor_name": "<span class="highlight">あなたの会社名</span>",
+    "vendor_address": "<span class="highlight">あなたの住所</span>"
+  },
+  "items": [
+    {
+      "line_no": "001",
+      "material_name": "<span class="highlight">あなたの商品名</span>",
+      "quantity": <span class="highlight">123</span>,
+      "unit_price": <span class="highlight">4500</span>,
+      "amount": <span class="highlight">553500</span>
+    }
+  ],
+  "summary": {
+    "subtotal": <span class="highlight">553500</span>,
+    "tax_amount": <span class="highlight">55350</span>,
+    "total": <span class="highlight">608850</span>
+  }
+}</pre>
+    </div>
+
+    <div class="section">
+        <h2>🔍 エラーチェック</h2>
+
+        <h3>よくあるエラー:</h3>
+        <table>
+            <tr>
+                <th>エラー</th>
+                <th>原因</th>
+                <th>解決法</th>
+            </tr>
+            <tr>
+                <td>Unexpected token</td>
+                <td>カンマの位置が間違い</td>
+                <td>最後の項目のカンマを削除</td>
+            </tr>
+            <tr>
+                <td>Unexpected end</td>
+                <td>括弧が閉じていない</td>
+                <td>{ } [ ] を確認</td>
+            </tr>
+            <tr>
+                <td>Invalid character</td>
+                <td>全角文字を使用</td>
+                <td>半角文字に変更</td>
+            </tr>
+        </table>
+
+        <div class="tip">
+            <strong>💡 ヒント:</strong> 変更後は必ず「✓ 検証」ボタンをクリック！
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎬 実践ワークフロー</h2>
+
+        <div class="step">
+            <strong>1.</strong> テンプレートを読込（ZPOF001 または Invoice）
+        </div>
+
+        <div class="step">
+            <strong>2.</strong> データソースタブ → サンプル読込
+        </div>
+
+        <div class="step">
+            <strong>3.</strong> 数値や文字を変更<br>
+            例: <code>"po_number": "PO-2026-001"</code> → <code>"PO-2026-999"</code>
+        </div>
+
+        <div class="step">
+            <strong>4.</strong> 「✓ 検証」をクリック
+        </div>
+
+        <div class="step">
+            <strong>5.</strong> プレビュータブで確認
+        </div>
+
+        <div class="step">
+            <strong>6.</strong> 満足したら「💾 保存」
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="index.html" class="button">SVF Simulator に戻る</a>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; color: #6b7280; font-size: 14px;">
+        <p>Version 1.0</p>
+    </div>
+</body>
+</html>
