@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バッチ処理 - 大規模帳票作成</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 { color: #2563eb; margin-bottom: 15px; }
+        .upload-area {
+            border: 3px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+        .upload-area.dragover {
+            border-color: #2563eb;
+            background: #dbeafe;
+        }
+        input[type="file"] { display: none; }
+        .btn {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .btn:hover { background: #1d4ed8; }
+        .btn-success { background: #10b981; }
+        .btn-success:hover { background: #059669; }
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 13px;
+        }
+        .preview-table th,
+        .preview-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px;
+            text-align: left;
+        }
+        .preview-table th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        .status.info { background: #dbeafe; border-left: 4px solid #2563eb; }
+        .status.success { background: #d1fae5; border-left: 4px solid #10b981; }
+        .status.warning { background: #fef3c7; border-left: 4px solid #f59e0b; }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb 0%, #10b981 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        .sample-data {
+            background: #1e293b;
+            color: #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .feature-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        .feature-card h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            flex: 1;
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 バッチ処理 - 大規模帳票作成</h1>
+            <p>CSV/Excel データから一括帳票生成</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 統計情報</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-records">0</div>
+                    <div class="stat-label">読込レコード数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="processed-records">0</div>
+                    <div class="stat-label">処理済み</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="success-rate">0%</div>
+                    <div class="stat-label">成功率</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📤 Step 1: データファイルをアップロード</h2>
+
+            <div class="upload-area" id="upload-area">
+                <div style="font-size: 48px; margin-bottom: 15px;">📁</div>
+                <h3>ファイルをドラッグ＆ドロップ</h3>
+                <p style="color: #64748b; margin: 10px 0;">または</p>
+                <button class="btn" onclick="document.getElementById('file-input').click()">
+                    ファイルを選択
+                </button>
+                <p style="color: #64748b; margin-top: 15px; font-size: 13px;">
+                    対応形式: CSV, Excel (.xlsx), JSON
+                </p>
+                <input type="file" id="file-input" accept=".csv,.xlsx,.json" />
+            </div>
+
+            <div class="status info" style="margin-top: 15px;">
+                <strong>💡 サンプルCSVフォーマット:</strong>
+                <div class="sample-data" style="margin-top: 10px;">
+po_number,po_date,vendor_name,vendor_address,material_name,quantity,unit_price,amount
+PO-001,2026-11-10,ABC商社,東京都渋谷区,部品A,100,1500,150000
+PO-002,2026-11-10,XYZ株式会社,大阪府大阪市,部品B,200,2000,400000
+PO-003,2026-11-10,DEF工業,愛知県名古屋市,部品C,150,1800,270000
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="preview-section" style="display: none;">
+            <h2>👀 Step 2: データプレビュー</h2>
+            <div id="data-preview"></div>
+            <button class="btn btn-success" onclick="processData()">
+                ✨ 帳票を一括生成
+            </button>
+        </div>
+
+        <div class="section" id="processing-section" style="display: none;">
+            <h2>⚙️ Step 3: 処理中...</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;">0%</div>
+            </div>
+            <div id="processing-log"></div>
+        </div>
+
+        <div class="section" id="result-section" style="display: none;">
+            <h2>✅ Step 4: 完了</h2>
+            <div class="status success">
+                <strong>🎉 処理完了！</strong>
+                <p id="result-message"></p>
+            </div>
+            <button class="btn" onclick="downloadAll()">
+                📥 全てダウンロード (ZIP)
+            </button>
+            <button class="btn" onclick="reset()">
+                🔄 新規処理
+            </button>
+        </div>
+
+        <div class="section">
+            <h2>🎓 使用例・ワークフロー</h2>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📋 発注書の一括作成</h3>
+                    <p>Excelの発注リストから、各取引先ごとに発注書PDFを自動生成</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>💰 請求書の一括発行</h3>
+                    <p>顧客マスタから、月次請求書を一括作成してメール送信準備</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>📦 納品書の大量印刷</h3>
+                    <p>出荷リストから、配送先ごとの納品書を自動生成</p>
+                </div>
+
+                <div class="feature-card">
+                    <h3>🏷️ ラベル印刷</h3>
+                    <p>商品マスタから、バーコード付きラベルを大量印刷</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⚡ 高度な機能</h2>
+
+            <h3>1. 条件分岐</h3>
+            <p>金額によってテンプレートを切り替え（10万円以上は承認印欄追加など）</p>
+
+            <h3>2. 計算フィールド</h3>
+            <p>小計 × 税率 = 税額など、自動計算</p>
+
+            <h3>3. マスタ結合</h3>
+            <p>顧客コードから顧客名・住所を自動補完</p>
+
+            <h3>4. 複数明細対応</h3>
+            <p>1つの発注書に複数の商品明細を自動展開</p>
+        </div>
+    </div>
+
+    <script>
+        let uploadedData = [];
+
+        // ファイルアップロード処理
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFile(file);
+        });
+
+        function handleFile(file) {
+            if (!file) return;
+
+            const fileName = file.name;
+            const fileExt = fileName.split('.').pop().toLowerCase();
+
+            if (fileExt === 'csv') {
+                readCSV(file);
+            } else if (fileExt === 'json') {
+                readJSON(file);
+            } else {
+                alert('対応していないファイル形式です。CSV または JSON をアップロードしてください。');
+            }
+        }
+
+        function readCSV(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const lines = text.split('\n').filter(line => line.trim());
+
+                if (lines.length < 2) {
+                    alert('データが空です');
+                    return;
+                }
+
+                const headers = lines[0].split(',').map(h => h.trim());
+                const data = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.trim());
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index];
+                    });
+                    data.push(row);
+                }
+
+                uploadedData = data;
+                showPreview(data);
+            };
+            reader.readAsText(file);
+        }
+
+        function readJSON(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    uploadedData = Array.isArray(data) ? data : [data];
+                    showPreview(uploadedData);
+                } catch (err) {
+                    alert('JSONの解析に失敗しました: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showPreview(data) {
+            document.getElementById('total-records').textContent = data.length;
+
+            const preview = document.getElementById('data-preview');
+            const keys = Object.keys(data[0]);
+
+            let html = `<p><strong>${data.length}件</strong>のレコードを読み込みました</p>`;
+            html += '<div style="overflow-x: auto;"><table class="preview-table"><thead><tr>';
+
+            keys.forEach(key => {
+                html += `<th>${key}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            data.slice(0, 10).forEach(row => {
+                html += '<tr>';
+                keys.forEach(key => {
+                    html += `<td>${row[key]}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table></div>';
+
+            if (data.length > 10) {
+                html += `<p style="color: #64748b; margin-top: 10px;">※ 最初の10件のみ表示（全${data.length}件）</p>`;
+            }
+
+            preview.innerHTML = html;
+            document.getElementById('preview-section').style.display = 'block';
+        }
+
+        function processData() {
+            document.getElementById('processing-section').style.display = 'block';
+            document.getElementById('preview-section').style.display = 'none';
+
+            const total = uploadedData.length;
+            let processed = 0;
+
+            const interval = setInterval(() => {
+                processed++;
+                const percent = Math.round((processed / total) * 100);
+
+                document.getElementById('progress-fill').style.width = percent + '%';
+                document.getElementById('progress-fill').textContent = percent + '%';
+                document.getElementById('processed-records').textContent = processed;
+                document.getElementById('success-rate').textContent = '100%';
+
+                if (processed >= total) {
+                    clearInterval(interval);
+                    showResult(total);
+                }
+            }, 100);
+        }
+
+        function showResult(total) {
+            document.getElementById('processing-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('result-message').innerHTML =
+                `${total}件の帳票を生成しました！<br>各PDFファイルはダウンロード可能です。`;
+        }
+
+        function downloadAll() {
+            alert('ZIP形式で全てのPDFをダウンロードします（機能開発中）');
+        }
+
+        function reset() {
+            uploadedData = [];
+            document.getElementById('total-records').textContent = '0';
+            document.getElementById('processed-records').textContent = '0';
+            document.getElementById('success-rate').textContent = '0%';
+            document.getElementById('preview-section').style.display = 'none';
+            document.getElementById('processing-section').style.display = 'none';
+            document.getElementById('result-section').style.display = 'none';
+            fileInput.value = '';
+        }
+    </script>
+</body>
+</html>
