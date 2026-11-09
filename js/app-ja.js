@@ -129,6 +129,54 @@ class SVFApp {
             this.designer.loadTemplate(template);
             this.currentTemplate = template;
             this.showNotification('ZPOF001 発注書テンプレートを読み込みました', 'success');
+        } else if (templateName === 'Invoice') {
+            // Invoice 請求書テンプレート
+            const template = {
+                name: 'Invoice',
+                description: '請求書テンプレート',
+                components: [
+                    { id: 'title', type: 'label', x: 300, y: 40, width: 200, height: 40,
+                      properties: { text: '請求書', fontSize: 28, fontWeight: 'bold', color: '#1e293b' } },
+                    { id: 'invoice-label', type: 'label', x: 50, y: 100, width: 100, height: 30,
+                      properties: { text: '請求番号:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'invoice-number', type: 'text', x: 160, y: 100, width: 150, height: 30,
+                      properties: { text: 'INV-2026-001', fontSize: 14 }, dataBinding: 'header.invoice_number' },
+                    { id: 'date-label', type: 'label', x: 400, y: 100, width: 80, height: 30,
+                      properties: { text: '請求日:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'date', type: 'text', x: 490, y: 100, width: 150, height: 30,
+                      properties: { text: '2026-11-09', fontSize: 14 }, dataBinding: 'header.invoice_date' },
+                    { id: 'client-label', type: 'label', x: 50, y: 150, width: 100, height: 30,
+                      properties: { text: '請求先:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'client', type: 'text', x: 160, y: 150, width: 300, height: 30,
+                      properties: { text: 'XYZ株式会社', fontSize: 14 }, dataBinding: 'header.client_name' },
+                    { id: 'address-label', type: 'label', x: 50, y: 190, width: 100, height: 30,
+                      properties: { text: '住所:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'address', type: 'text', x: 160, y: 190, width: 480, height: 30,
+                      properties: { text: '東京都千代田区丸の内1-1-1', fontSize: 14 }, dataBinding: 'header.client_address' },
+                    { id: 'table', type: 'table', x: 50, y: 250, width: 690, height: 250,
+                      properties: { rows: 5, cols: 5 } },
+                    { id: 'subtotal-label', type: 'label', x: 500, y: 530, width: 80, height: 30,
+                      properties: { text: '小計:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'subtotal', type: 'text', x: 590, y: 530, width: 150, height: 30,
+                      properties: { text: '¥500,000', fontSize: 14 }, dataBinding: 'summary.subtotal' },
+                    { id: 'tax-label', type: 'label', x: 500, y: 570, width: 80, height: 30,
+                      properties: { text: '消費税:', fontSize: 14, fontWeight: '600' } },
+                    { id: 'tax', type: 'text', x: 590, y: 570, width: 150, height: 30,
+                      properties: { text: '¥50,000', fontSize: 14 }, dataBinding: 'summary.tax_amount' },
+                    { id: 'total-label', type: 'label', x: 500, y: 610, width: 80, height: 30,
+                      properties: { text: '合計金額:', fontSize: 16, fontWeight: 'bold' } },
+                    { id: 'total', type: 'text', x: 590, y: 610, width: 150, height: 30,
+                      properties: { text: '¥550,000', fontSize: 16, fontWeight: 'bold' }, dataBinding: 'summary.total' },
+                    { id: 'payment-label', type: 'label', x: 50, y: 670, width: 120, height: 30,
+                      properties: { text: 'お支払期限:', fontSize: 13, fontWeight: '600' } },
+                    { id: 'payment-due', type: 'text', x: 180, y: 670, width: 150, height: 30,
+                      properties: { text: '2026-12-09', fontSize: 13 }, dataBinding: 'header.payment_due' }
+                ]
+            };
+
+            this.designer.loadTemplate(template);
+            this.currentTemplate = template;
+            this.showNotification('Invoice 請求書テンプレートを読み込みました', 'success');
         }
     }
 
