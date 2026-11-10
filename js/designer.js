@@ -176,8 +176,8 @@ class SVFDesigner {
                 return `<div class="component-content">${properties.text}</div>`;
 
             case 'table':
-                const rows = properties.rows || 3;
-                const cols = properties.cols || 6;
+                const rows = parseInt(properties.rows) || 3;
+                const cols = parseInt(properties.cols) || 6;
 
                 // 発注書/請求書用の列ヘッダー
                 const tableHeaders = cols === 6

@@ -33,34 +33,53 @@ class SVFApp {
     }
 
     bindEvents() {
-        document.getElementById('btn-save').addEventListener('click', () => this.saveTemplate());
-        document.getElementById('btn-load').addEventListener('click', () => this.loadTemplate());
-        document.getElementById('btn-export').addEventListener('click', () => this.exportTemplate());
-        document.getElementById('btn-import').addEventListener('click', () => this.importTemplate());
-        document.getElementById('btn-new').addEventListener('click', () => this.newTemplate());
-        document.getElementById('btn-undo').addEventListener('click', () => this.designer.undo());
-        document.getElementById('btn-redo').addEventListener('click', () => this.designer.redo());
-        document.getElementById('btn-preview').addEventListener('click', () => this.switchMode('preview'));
-        document.getElementById('btn-data').addEventListener('click', () => this.switchMode('data'));
-        document.getElementById('btn-print').addEventListener('click', () => this.print());
-        document.getElementById('btn-pdf').addEventListener('click', () => this.exportPDF());
-        document.getElementById('btn-zoom-in').addEventListener('click', () => this.zoom(0.25));
-        document.getElementById('btn-zoom-out').addEventListener('click', () => this.zoom(-0.25));
+        // 安全なイベントバインディング用のヘルパー関数
+        const bind = (id, event, handler) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener(event, handler);
+            } else {
+                console.warn(`Element not found: ${id}`);
+            }
+        };
+
+        // ボタンイベント
+        bind('btn-save', 'click', () => this.saveTemplate());
+        bind('btn-load', 'click', () => this.loadTemplate());
+        bind('btn-export', 'click', () => this.exportTemplate());
+        bind('btn-import', 'click', () => this.importTemplate());
+        bind('btn-new', 'click', () => this.newTemplate());
+        bind('btn-undo', 'click', () => this.designer.undo());
+        bind('btn-redo', 'click', () => this.designer.redo());
+        bind('btn-preview', 'click', () => this.switchMode('preview'));
+        bind('btn-data', 'click', () => this.switchMode('data'));
+        bind('btn-print', 'click', () => this.print());
+        bind('btn-pdf', 'click', () => this.exportPDF());
+        bind('btn-zoom-in', 'click', () => this.zoom(0.25));
+        bind('btn-zoom-out', 'click', () => this.zoom(-0.25));
+
+        // タブボタン
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.switchTab(e.target.dataset.tab));
         });
-        document.getElementById('btn-validate-json').addEventListener('click', () => this.validateJSON());
-        document.getElementById('btn-format-json').addEventListener('click', () => this.formatJSON());
-        document.getElementById('btn-load-sample').addEventListener('click', () => this.loadSampleData());
-        document.getElementById('data-select').addEventListener('change', (e) => {
+
+        // データエディタ関連
+        bind('btn-validate-json', 'click', () => this.validateJSON());
+        bind('btn-format-json', 'click', () => this.formatJSON());
+        bind('btn-load-sample', 'click', () => this.loadSampleData());
+        bind('data-select', 'change', (e) => {
             this.currentData = e.target.value;
             this.updatePreview();
         });
-        document.getElementById('btn-refresh-preview').addEventListener('click', () => this.updatePreview());
-        document.getElementById('btn-confirm-save').addEventListener('click', () => this.confirmSave());
+        bind('btn-refresh-preview', 'click', () => this.updatePreview());
+        bind('btn-confirm-save', 'click', () => this.confirmSave());
+
+        // キャンセルボタン
         document.querySelectorAll('.btn-cancel').forEach(btn => {
             btn.addEventListener('click', () => this.closeModal());
         });
+
+        // キーボードイベント
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
 
         // テンプレートカードのボタンをバインド
@@ -68,22 +87,113 @@ class SVFApp {
     }
 
     bindTemplateCards() {
-        // DOMが完全にロードされた後にバインド
-        setTimeout(() => {
-            const templateCards = document.querySelectorAll('.template-card');
-            templateCards.forEach((card, index) => {
-                const btn = card.querySelector('.btn');
-                if (btn) {
-                    btn.addEventListener('click', () => {
-                        if (index === 0) {
-                            this.loadPredefinedTemplate('ZPOF001');
-                        } else if (index === 1) {
-                            this.loadPredefinedTemplate('Invoice');
-                        }
-                    });
+        // 動的にテンプレートグリッドをレンダリング
+        this.renderTemplateGrid();
+    }
+
+    renderTemplateGrid() {
+        const gridEl = document.getElementById('template-grid');
+        if (!gridEl) {
+            console.warn('template-grid element not found');
+            return;
+        }
+
+        // 既存のテンプレートを全て削除
+        gridEl.innerHTML = '';
+
+        // 予定義テンプレート
+        const predefined = [
+            { name: 'ZPOF001', title: '発注書', desc: '発注書テンプレート', preview: '発注書' },
+            { name: 'Invoice', title: '請求書', desc: '請求書テンプレート', preview: '請求書' }
+        ];
+
+        // 保存されたカスタムテンプレート
+        const savedTemplates = this.getSavedTemplates();
+        const customTemplates = Object.keys(savedTemplates).map(key => ({
+            name: key,
+            title: key,
+            desc: savedTemplates[key].description || 'カスタムテンプレート',
+            preview: '📋',
+            isCustom: true,
+            createdAt: savedTemplates[key].createdAt
+        }));
+
+        // 全テンプレートを結合
+        const allTemplates = [...predefined, ...customTemplates];
+
+        // テンプレートカードを生成
+        allTemplates.forEach(template => {
+            const card = document.createElement('div');
+            card.className = 'template-card' + (template.isCustom ? ' custom' : ' sample');
+
+            card.innerHTML = `
+                <div class="template-preview">
+                    <div class="preview-placeholder">${this.escapeHtml(template.preview)}</div>
+                </div>
+                <div class="template-info">
+                    <h4>${this.escapeHtml(template.title)}</h4>
+                    <p>${this.escapeHtml(template.desc)}</p>
+                    ${template.createdAt ? `<small style="font-size:11px;color:#94a3b8;">${new Date(template.createdAt).toLocaleString('ja-JP')}</small>` : ''}
+                    <button class="btn btn-small" data-template="${this.escapeHtml(template.name)}">読込</button>
+                    ${template.isCustom ? `<button class="btn btn-small btn-delete" data-template="${this.escapeHtml(template.name)}" style="background:#dc2626;margin-left:4px;">削除</button>` : ''}
+                </div>
+            `;
+
+            gridEl.appendChild(card);
+        });
+
+        // イベントリスナーをバインド
+        gridEl.querySelectorAll('.btn:not(.btn-delete)').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const templateName = e.target.dataset.template;
+                if (templateName === 'ZPOF001' || templateName === 'Invoice') {
+                    this.loadPredefinedTemplate(templateName);
+                } else {
+                    this.loadSavedTemplate(templateName);
                 }
             });
-        }, 100);
+        });
+
+        // 削除ボタンのイベントリスナー
+        gridEl.querySelectorAll('.btn-delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const templateName = e.target.dataset.template;
+                this.deleteTemplate(templateName);
+            });
+        });
+
+        console.log('テンプレートグリッドを更新しました:', allTemplates.length, '個');
+    }
+
+    loadSavedTemplate(name) {
+        const templates = this.getSavedTemplates();
+        if (templates[name]) {
+            this.designer.loadTemplate(templates[name]);
+            this.currentTemplate = templates[name];
+            this.showNotification(`テンプレート "${name}" を読み込みました`, 'success');
+        } else {
+            this.showNotification(`テンプレート "${name}" が見つかりません`, 'error');
+        }
+    }
+
+    deleteTemplate(name) {
+        if (!confirm(`テンプレート "${name}" を削除しますか？`)) {
+            return;
+        }
+
+        const templates = this.getSavedTemplates();
+        if (templates[name]) {
+            delete templates[name];
+            localStorage.setItem('svf_templates', JSON.stringify(templates));
+            this.renderTemplateGrid();
+            this.showNotification(`テンプレート "${name}" を削除しました`, 'success');
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
     loadPredefinedTemplate(templateName) {
@@ -188,16 +298,33 @@ class SVFApp {
     }
 
     saveTemplate() {
-        document.getElementById('modal-save').classList.add('active');
+        const modal = document.getElementById('modal-save');
+        if (modal) {
+            modal.classList.add('active');
+        } else {
+            console.error('modal-save element not found');
+            this.showNotification('保存ダイアログが見つかりません', 'error');
+        }
     }
 
     confirmSave() {
-        const name = document.getElementById('template-name').value;
-        const desc = document.getElementById('template-desc').value;
+        const nameInput = document.getElementById('template-name');
+        const descInput = document.getElementById('template-desc');
+
+        if (!nameInput || !descInput) {
+            console.error('Template form elements not found');
+            this.showNotification('フォーム要素が見つかりません', 'error');
+            return;
+        }
+
+        const name = nameInput.value.trim();
+        const desc = descInput.value.trim();
+
         if (!name) {
             alert(this.messages.enterTemplateName);
             return;
         }
+
         const template = {
             name: name,
             description: desc,
@@ -205,26 +332,87 @@ class SVFApp {
             dataBinding: this.designer.getDataBinding(),
             createdAt: new Date().toISOString()
         };
+
         const templates = this.getSavedTemplates();
         templates[name] = template;
-        localStorage.setItem('svf_templates', JSON.stringify(templates));
-        this.closeModal();
-        this.showNotification(this.messages.templateSaved.replace('{name}', name), 'success');
+
+        try {
+            localStorage.setItem('svf_templates', JSON.stringify(templates));
+            this.closeModal();
+            this.renderTemplateGrid(); // テンプレートグリッドを更新
+            this.showNotification(this.messages.templateSaved.replace('{name}', name), 'success');
+            console.log('Template saved successfully:', name);
+        } catch (err) {
+            console.error('Failed to save template:', err);
+            this.showNotification('テンプレートの保存に失敗しました: ' + err.message, 'error');
+        }
     }
 
     loadTemplate() {
-        const templates = this.getSavedTemplates();
-        const names = Object.keys(templates);
-        if (names.length === 0) {
-            alert(this.messages.noTemplates);
+        const modal = document.getElementById('modal-load');
+        const listEl = document.getElementById('template-load-list');
+
+        if (!modal || !listEl) {
+            console.error('modal-load elements not found');
             return;
         }
-        const selected = prompt(this.messages.selectTemplate.replace('{names}', names.join('\n')));
-        if (selected && templates[selected]) {
-            this.designer.loadTemplate(templates[selected]);
-            this.currentTemplate = templates[selected];
-            this.showNotification(this.messages.templateLoaded.replace('{name}', selected), 'success');
+
+        // 既存のリストをクリア
+        listEl.innerHTML = '';
+
+        // 予定義テンプレート
+        const predefined = [
+            { name: 'ZPOF001', icon: '📋', desc: '発注書テンプレート', isPredefined: true },
+            { name: 'Invoice', icon: '📄', desc: '請求書テンプレート', isPredefined: true }
+        ];
+
+        // 保存されたカスタムテンプレート
+        const savedTemplates = this.getSavedTemplates();
+        const custom = Object.keys(savedTemplates).map(key => ({
+            name: key,
+            icon: '💾',
+            desc: savedTemplates[key].description || 'カスタムテンプレート',
+            createdAt: savedTemplates[key].createdAt,
+            template: savedTemplates[key]
+        }));
+
+        const allTemplates = [...predefined, ...custom];
+
+        if (allTemplates.length === 0) {
+            listEl.innerHTML = '<div class="template-load-empty">保存されているテンプレートはありません</div>';
+        } else {
+            allTemplates.forEach(t => {
+                const item = document.createElement('div');
+                item.className = `template-load-item ${t.isPredefined ? 'predefined' : 'custom'}`;
+
+                const meta = t.createdAt
+                    ? `<div class="template-load-meta">作成: ${new Date(t.createdAt).toLocaleString('ja-JP')}</div>`
+                    : '';
+
+                item.innerHTML = `
+                    <div class="template-load-icon">${t.icon}</div>
+                    <div class="template-load-info">
+                        <div class="template-load-name">${this.escapeHtml(t.name)}</div>
+                        <div class="template-load-desc">${this.escapeHtml(t.desc)}</div>
+                        ${meta}
+                    </div>
+                `;
+
+                item.addEventListener('click', () => {
+                    if (t.isPredefined) {
+                        this.loadPredefinedTemplate(t.name);
+                    } else {
+                        this.loadSavedTemplate(t.name);
+                    }
+                    this.closeModal();
+                });
+
+                listEl.appendChild(item);
+            });
         }
+
+        modal.classList.add('active');
+        console.log('テンプレート選択ダイアログを表示:', allTemplates.length, '個');
     }
 
     exportTemplate() {
@@ -315,12 +503,22 @@ class SVFApp {
             ],
             "summary": { "subtotal": 250000, "tax_rate": 0.1, "tax_amount": 25000, "total": 275000 }
         };
-        document.getElementById('data-editor').value = JSON.stringify(sampleData, null, 2);
-        this.showNotification(this.messages.sampleDataLoaded, 'success');
+        const editor = document.getElementById('data-editor');
+        if (editor) {
+            editor.value = JSON.stringify(sampleData, null, 2);
+            this.showNotification(this.messages.sampleDataLoaded, 'success');
+        } else {
+            console.error('data-editor element not found');
+            this.showNotification('データエディタが見つかりません', 'error');
+        }
     }
 
     validateJSON() {
         const editor = document.getElementById('data-editor');
+        if (!editor) {
+            this.showNotification('データエディタが見つかりません', 'error');
+            return;
+        }
         try {
             JSON.parse(editor.value);
             this.showNotification(this.messages.jsonValid, 'success');
@@ -331,6 +529,10 @@ class SVFApp {
 
     formatJSON() {
         const editor = document.getElementById('data-editor');
+        if (!editor) {
+            this.showNotification('データエディタが見つかりません', 'error');
+            return;
+        }
         try {
             const data = JSON.parse(editor.value);
             editor.value = JSON.stringify(data, null, 2);
@@ -342,10 +544,16 @@ class SVFApp {
 
     updatePreview() {
         const editor = document.getElementById('data-editor');
+        const preview = document.getElementById('preview-area');
+        const designArea = document.getElementById('design-area');
+
+        if (!editor || !preview || !designArea) {
+            console.error('Required elements not found for preview update');
+            return;
+        }
+
         try {
             const data = JSON.parse(editor.value);
-            const preview = document.getElementById('preview-area');
-            const designArea = document.getElementById('design-area');
             const cloned = designArea.cloneNode(true);
             this.applyDataBinding(cloned, data);
             preview.innerHTML = '';

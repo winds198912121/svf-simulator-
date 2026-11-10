@@ -475,6 +475,15 @@ body {
     transform: translateY(-2px);
 }
 
+.template-card.custom {
+    border-left: 3px solid #2563eb;
+    background: linear-gradient(to bottom, #eff6ff 0%, white 40px);
+}
+
+.template-card.custom .template-preview {
+    background: #dbeafe;
+}
+
 .template-preview {
     height: 150px;
     background: var(--bg-secondary);
@@ -492,6 +501,19 @@ body {
 
 .template-info {
     padding: 12px;
+}
+
+.template-info small {
+    display: block;
+    margin: 4px 0;
+}
+
+.btn-delete {
+    background: #dc2626 !important;
+}
+
+.btn-delete:hover {
+    background: #b91c1c !important;
 }
 
 .template-info h4 {
@@ -544,6 +566,78 @@ body {
     gap: 12px;
     justify-content: flex-end;
     margin-top: 20px;
+}
+
+/* Template Load List */
+.template-load-list {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.template-load-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.template-load-item:last-child {
+    border-bottom: none;
+}
+
+.template-load-item:hover {
+    background: #f8fafc;
+}
+
+.template-load-item.predefined {
+    background: linear-gradient(to right, #fef3c7 0%, white 20px);
+}
+
+.template-load-item.custom {
+    background: linear-gradient(to right, #dbeafe 0%, white 20px);
+}
+
+.template-load-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.template-load-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.template-load-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #0f172a;
+    margin-bottom: 2px;
+}
+
+.template-load-desc {
+    font-size: 13px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.template-load-meta {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.template-load-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
 }
 
 /* Scrollbar */
